@@ -20,7 +20,7 @@ export default {
     css: [],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: [],
+    plugins: [{ src: '@/plugins/axios.js' }],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: true,
@@ -29,18 +29,56 @@ export default {
     buildModules: [
         // https://go.nuxtjs.dev/eslint
         '@nuxtjs/eslint-module',
-        // https://go.nuxtjs.dev/tailwindcss
-        '@nuxtjs/tailwindcss',
+        '@nuxtjs/vuetify',
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
+        '@nuxtjs/auth-next',
     ],
 
+    auth: {
+        strategies: {
+            local: {
+                token: {
+                    property: false,
+                    type: 'Bearer',
+                    maxage: 3600,
+                },
+                redirect: false,
+                user: {
+                    property: 'user',
+                    autoFetch: false,
+                },
+                endpoints: false,
+            },
+        },
+    },
+
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
-    axios: {},
+    axios: {
+        baseURL: process.env.SPOTIFY_BASE_API_URL, // Used as fallback if no runtime config is provided
+    },
+
+    publicRuntimeConfig: {
+        axios: {
+            browserBaseURL: process.env.SPOTIFY_BASE_API_URL,
+        },
+
+        spotifyAuthorizationAPIURL: process.env.SPOTIFY_AUTHORIZATION_API_URL,
+
+        spotifyClientID: process.env.SPOTIFY_CLIENT_ID,
+    },
+
+    privateRuntimeConfig: {
+        axios: {
+            baseURL: process.env.SPOTIFY_BASE_API_URL,
+        },
+
+        spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {},
