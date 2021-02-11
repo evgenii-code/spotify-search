@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" max-width="600" outlined>
+    <v-card class="pa-6" max-width="600" width="100%" outlined>
         <v-list-item-title class="headline mb-1">
             Search on Spotify
         </v-list-item-title>
@@ -33,9 +33,11 @@ export default {
         search() {
             console.log('axios', this.$axios.defaults.headers);
 
-            // this.$axios
-            //     .get(`/search?query=${this.searchQuery}`)
-            //     .then(({ data }) => console.log('data', data));
+            this.$axios
+                .get(
+                    `/search?query=${this.searchQuery}&type=album,artist,playlist,track`
+                )
+                .then(({ data }) => console.log('data', data));
         },
     },
 };

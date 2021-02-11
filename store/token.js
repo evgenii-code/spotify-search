@@ -1,6 +1,9 @@
 export const state = () => ({
-    accessToken: '',
-    tokenType: '',
+    tokenData: {
+        accessToken: '',
+        tokenType: '',
+        expirityDate: '',
+    },
 });
 
 export const mutations = {
@@ -10,27 +13,65 @@ export const mutations = {
 };
 
 export const actions = {
-    setAccessToken({ state, commit }, { accessToken }) {
+    setTokenData({ state, commit }, { tokenData }) {
         commit('setState', {
-            name: 'accessToken',
-            value: accessToken,
+            name: 'tokenData',
+            value: tokenData,
         });
     },
 
-    setTokenType({ state, commit }, { tokenType }) {
+    clearTokenData({ commit }) {
         commit('setState', {
-            name: 'tokenType',
-            value: tokenType,
+            name: 'tokenData',
+            value: {
+                accessToken: '',
+                tokenType: '',
+                expirityDate: '',
+            },
         });
+    },
+
+    fetchAuthToken(
+        { dispatch },
+        { spotifyAuthorizationAPIURL, body, headers }
+    ) {
+        return this.$axios
+            .post(spotifyAuthorizationAPIURL, body, {
+                headers,
+            })
+            .then((response) => {
+                const {
+                    token_type: tokenType = '',
+                    access_token: accessToken = '',
+                    expires_in: expiresIn = 0,
+                } = response.data;
+
+                const expirityDate = new Date();
+
+                expirityDate.setHours(
+                    expirityDate.getHours() + expiresIn / 60 / 60
+                );
+
+                dispatch('setTokenData', {
+                    tokenData: { tokenType, accessToken, expirityDate },
+                });
+
+                return Promise.resolve(response);
+            })
+            .catch((error) => console.log('error', error));
     },
 };
 
 export const getters = {
-    getAccessToken(state) {
-        return state.accessToken;
+    getTokenData(state) {
+        return state.tokenData;
     },
 
-    getTokenType(state) {
-        return state.tokenType;
+    isTokenInvalid(state) {
+        const { accessToken, tokenType, expirityDate } = state.tokenData;
+        const currentDate = new Date();
+        const isTokenExpired = currentDate >= expirityDate;
+
+        return isTokenExpired || !accessToken || !tokenType || !expirityDate;
     },
 };

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="layout">
         <Nuxt />
     </div>
 </template>
@@ -8,40 +8,29 @@
 import btoa from 'btoa';
 
 export default {
-    fetch() {
+    async fetch() {
         const {
             spotifyAuthorizationAPIURL,
             spotifyClientID,
             spotifyClientSecret,
         } = this.$config;
-
         const base64EncodedToken = btoa(
             spotifyClientID + ':' + spotifyClientSecret
         );
 
-        this.$axios
-            .post(spotifyAuthorizationAPIURL, 'grant_type=client_credentials', {
-                headers: {
-                    // eslint-disable-next-line prettier/prettier
-                    'Authorization': `Basic ${base64EncodedToken}`,
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-            .then(({ data }) => {
-                // const {
-                //     // token_type: tokenType,
-                //     access_token: accessToken,
-                // } = data;
+        const body = 'grant_type=client_credentials';
 
-                console.log('data', data);
+        const headers = {
+            // eslint-disable-next-line prettier/prettier
+            'Authorization': `Basic ${base64EncodedToken}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        };
 
-                // console.log('$auth.token', this.$auth.token);
-
-                // return this.$auth.setUserToken(accessToken);
-                // this.$store.dispatch('token/setAccessToken', { accessToken });
-                // this.$store.dispatch('token/setTokenType', { tokenType });
-            })
-            .catch((error) => console.log('HERE!!!!!! error', error));
+        await this.$store.dispatch('token/fetchAuthToken', {
+            spotifyAuthorizationAPIURL,
+            body,
+            headers,
+        });
     },
 };
 </script>
@@ -64,5 +53,13 @@ html {
 *::after {
     box-sizing: border-box;
     margin: 0;
+}
+
+.layout {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
 }
 </style>

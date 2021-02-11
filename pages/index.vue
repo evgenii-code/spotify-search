@@ -1,6 +1,10 @@
 <template>
-    <v-container class="container">
-        <search> </search>
+    <v-container fill-height>
+        <v-row fill-height align="center" justify="center">
+            <v-col align="center" justify="center">
+                <search> </search>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -11,13 +15,4 @@ export default {
 };
 </script>
 
-<style>
-.container {
-    margin: 0 auto;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-</style>
+<style></style>

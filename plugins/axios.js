@@ -1,5 +1,24 @@
 /* eslint-disable no-console */
-export default function ({ $axios }) {
+export default function ({ $axios, store }) {
+    $axios.onRequest(() => {
+        if (process.server) return;
+
+        const isTokenInvalid = store.getters['token/isTokenInvalid'];
+
+        if (isTokenInvalid) {
+            store.dispatch('token/clearTokenData');
+            $axios.setToken(false);
+
+            return;
+        }
+
+        if ($axios.defaults.headers.common.Authorization) return;
+
+        const { accessToken, tokenType } = store.getters['token/getTokenData'];
+
+        $axios.setToken(accessToken, tokenType);
+    });
+
     $axios.onError((error) => {
         if (error.response) {
             console.log(
