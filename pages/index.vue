@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import Search from '@/components/Search.vue';
+import Search from '@/components/Search/Search';
+
 export default {
     components: { Search },
 };
