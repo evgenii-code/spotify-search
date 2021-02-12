@@ -63,7 +63,15 @@
 </template>
 
 <script>
+import useSearch from './useSearch';
+
 export default {
+    setup(props, context) {
+        const { results, fetchSearchResults } = useSearch({ context });
+
+        return { results, fetchSearchResults };
+    },
+
     data() {
         return {
             loading: false,
@@ -81,10 +89,9 @@ export default {
 
             this.loading = true;
 
-            this.$axios
-                .get(`/search?query=${this.searchQuery}&type=${type}`)
-                .then(({ data }) => console.log('data', data))
-                .finally(() => (this.loading = false));
+            this.fetchSearchResults(this.searchQuery, type).finally(
+                () => (this.loading = false)
+            );
         },
     },
 };
