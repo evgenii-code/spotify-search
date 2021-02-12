@@ -1,10 +1,6 @@
 <template>
-    <v-container fill-height>
-        <v-row fill-height align="center" justify="center">
-            <v-col align="center" justify="center">
-                <search> </search>
-            </v-col>
-        </v-row>
+    <v-container fill-height class="pa-md-0">
+        <search class="mx-auto"> </search>
     </v-container>
 </template>
 
